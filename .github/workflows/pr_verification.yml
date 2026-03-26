@@ -21,7 +21,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
 
       - name: Setup java
         uses: ./.github/actions/my-config
