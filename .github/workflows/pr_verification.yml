@@ -22,8 +22,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Fetch full commit history. Usually needed for SonarQube analysis.
-          ref: ${{ github.event.pull_request.head.sha }} # Actual PR commit (HEAD).
 
       - name: Setup java
         uses: ./.github/actions/my-config
@@ -43,6 +41,19 @@ jobs:
             **/build/**/jacoco*.xml
             **/build/classes/
 
+  sonar-scan:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup java
+        uses: ./.github/actions/my-config
+
       # Fake SonarQube scan.
       - name: Run Sonar Scan
         run: |
@@ -51,14 +62,11 @@ jobs:
           "${SONAR_SCAN_SCRIPT}"
 
   lint:
-    name: PR Verification
-    runs-on: ubuntu-latest # Machine this workflow will run on. Other Github-hosted runners include: windows-latest, macos-latest.
+    name: Linting job
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0 # Fetch full commit history. Usually needed for SonarQube analysis.
-          ref: ${{ github.event.pull_request.head.sha }} # Actual PR commit (HEAD).
 
       - name: Setup java
         uses: ./.github/actions/my-config
